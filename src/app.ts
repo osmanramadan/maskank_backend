@@ -44,3 +44,5 @@ app.use('/api/locations', locationRoutes);
 app.use('/api/properties', propertyRoutes);
 app.use(notFound);
 app.use(errorHandler);
+
+export default app;
