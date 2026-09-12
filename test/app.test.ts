@@ -13,7 +13,7 @@ before(async () => {
 });
 
 after(async () => {
-  await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
 });
 
 test('GET / returns the API welcome contract and security headers', async () => {

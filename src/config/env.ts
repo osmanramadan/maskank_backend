@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import type { SignOptions } from 'jsonwebtoken';
 
 const requiredInProduction = ['DATABASE_URL', 'JWT_SECRET'];
 
@@ -15,7 +16,7 @@ export const env = {
   databaseUrl: process.env.DATABASE_URL || '',
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   jwtSecret: process.env.JWT_SECRET || 'development-only-secret',
-  jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  jwtExpiresIn: (process.env.JWT_EXPIRES_IN || '7d') as SignOptions['expiresIn'],
   bcryptSaltRounds: Number(process.env.BCRYPT_SALT_ROUNDS || 12),
   uploadDirectory: process.env.UPLOAD_DIRECTORY || 'uploads',
   maxUploadFileSizeBytes: Number(process.env.MAX_UPLOAD_FILE_SIZE_BYTES || 5242880),

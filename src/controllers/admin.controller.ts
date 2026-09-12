@@ -21,7 +21,7 @@ export async function properties(request, response, next) {
 }
 
 export async function approveProperty(request, response, next) {
-  try { response.json({ success: true, message: 'Property approved', data: await changePropertyStatus(request.params.id, 'approved', request.user.id) }); } catch (error) { next(error); }
+  try { response.json({ success: true, message: 'Property approved', data: await changePropertyStatus(request.params.id, 'approved', request.user.id, undefined) }); } catch (error) { next(error); }
 }
 
 export async function rejectProperty(request, response, next) {
@@ -29,11 +29,11 @@ export async function rejectProperty(request, response, next) {
 }
 
 export async function markSold(request, response, next) {
-  try { response.json({ success: true, message: 'Property marked as sold', data: await changePropertyStatus(request.params.id, 'sold', request.user.id) }); } catch (error) { next(error); }
+  try { response.json({ success: true, message: 'Property marked as sold', data: await changePropertyStatus(request.params.id, 'sold', request.user.id, undefined) }); } catch (error) { next(error); }
 }
 
 export async function markRented(request, response, next) {
-  try { response.json({ success: true, message: 'Property marked as rented', data: await changePropertyStatus(request.params.id, 'rented', request.user.id) }); } catch (error) { next(error); }
+  try { response.json({ success: true, message: 'Property marked as rented', data: await changePropertyStatus(request.params.id, 'rented', request.user.id, undefined) }); } catch (error) { next(error); }
 }
 
 export async function deleteProperty(request, response, next) {
