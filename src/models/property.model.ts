@@ -170,7 +170,7 @@ export async function createProperty(property) {
       latitude, longitude, google_maps_url
     ) VALUES (
       $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13,
-      $14, $15, $16, $17, $18, $19, $20, $21
+      $14, $15, $16, $17, $18, $19, $20
     ) RETURNING id`,
     [
       property.ownerId, property.title, property.description, property.propertyType,
@@ -193,7 +193,7 @@ export async function updateProperty(id, ownerId, property) {
       governorate_id = $14, city_id = $15, address = $16,
       latitude = $17, longitude = $18, google_maps_url = $19,
       status = 'pending', rejection_reason = NULL, approved_by = NULL, approved_at = NULL
-     WHERE id = $21 AND owner_id = $22
+     WHERE id = $20 AND owner_id = $21
      RETURNING id`,
     [
       property.title, property.description, property.propertyType, property.purpose,
