@@ -14,14 +14,14 @@ import messageRoutes from './routes/message.routes.js';
 import locationRoutes from './routes/location.routes.js';
 import propertyRoutes from './routes/property.routes.js';
 
-const helmet = (
-  (helmetModule as unknown as { default?: typeof helmetModule }).default || helmetModule
+const helmetFactory = (
+  (helmetModule as unknown as { default?: unknown }).default ?? helmetModule
 ) as unknown as () => import('express').RequestHandler;
 
 export const app = express();
 
 app.disable('x-powered-by');
-app.use(helmet());
+app.use(helmetFactory());
 app.use(cors({ origin: env.corsOrigin }));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
