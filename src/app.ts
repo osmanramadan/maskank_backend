@@ -1,6 +1,6 @@
 import cors from 'cors';
 import express from 'express';
-import helmet from 'helmet';
+import * as helmetModule from 'helmet';
 import morgan from 'morgan';
 import path from 'node:path';
 import { env } from './config/env.js';
@@ -13,6 +13,10 @@ import healthRoutes from './routes/health.routes.js';
 import messageRoutes from './routes/message.routes.js';
 import locationRoutes from './routes/location.routes.js';
 import propertyRoutes from './routes/property.routes.js';
+
+const helmet = (
+  (helmetModule as unknown as { default?: typeof helmetModule }).default || helmetModule
+) as unknown as () => import('express').RequestHandler;
 
 export const app = express();
 
