@@ -1,4 +1,5 @@
 import { pool } from '../config/database.js';
+import { fromClause, propertyColumns } from './property.model.js';
 
 const userColumns = `
   id, full_name, email, phone, role, avatar_url, is_active, created_at, updated_at
@@ -68,6 +69,14 @@ export async function findAdminProperties({ page, limit, status }) {
     dataValues
   );
   return { rows: data.rows, total: count.rows[0].total };
+}
+
+export async function findAdminPropertyById(propertyId) {
+  const result = await pool.query(
+    `SELECT ${propertyColumns} ${fromClause} WHERE p.id = $1`,
+    [propertyId]
+  );
+  return result.rows[0] || null;
 }
 
 export async function setPropertyStatus(propertyId, status, adminId, rejectionReason = null) {

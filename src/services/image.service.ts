@@ -17,12 +17,13 @@ function parseId(value, field) {
   return id;
 }
 
-function uploadToCloudinary(file) {
+function uploadToCloudinaryOnce(file) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
         folder: env.cloudinaryFolder,
-        resource_type: 'image'
+        resource_type: 'image',
+        timestamp: Math.floor(Date.now() / 1000)
       },
       (error, result) => {
         if (error) reject(error);
@@ -32,6 +33,16 @@ function uploadToCloudinary(file) {
     );
     stream.end(file.buffer);
   });
+}
+
+async function uploadToCloudinary(file) {
+  try {
+    return await uploadToCloudinaryOnce(file);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!message.toLowerCase().includes('stale request')) throw error;
+    return uploadToCloudinaryOnce(file);
+  }
 }
 
 async function removeCloudinaryImages(images) {

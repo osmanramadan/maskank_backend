@@ -22,7 +22,16 @@ export const app = express();
 
 app.disable('x-powered-by');
 app.use(helmetFactory());
-app.use(cors({ origin: env.corsOrigin }));
+app.use(cors({
+  origin: (requestOrigin, callback) => {
+    if (!requestOrigin || env.corsOrigins.includes(requestOrigin)) {
+      callback(null, true);
+      return;
+    }
+    callback(new Error('Origin is not allowed by CORS'));
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));

@@ -24,6 +24,10 @@ const sortOptions = {
   area_high_to_low: 'p.area_sqm DESC'
 };
 
+function normalizePropertyType(value) {
+  return value === undefined || value === null ? undefined : String(value).trim().toLowerCase();
+}
+
 function propertyError(message, statusCode = 400) {
   const error = new Error(message);
   error.statusCode = statusCode;
@@ -64,7 +68,7 @@ function normalizePropertyInput(input) {
   const property = {
     title: String(input.title || '').trim(),
     description: String(input.description || '').trim(),
-    propertyType: String(input.property_type || input.propertyType || '').toLowerCase(),
+    propertyType: normalizePropertyType(input.property_type || input.propertyType) || '',
     purpose: String(input.purpose || '').toLowerCase(),
     currency: String(input.currency || 'EGP').toUpperCase(),
     address: String(input.address || '').trim(),
@@ -79,7 +83,6 @@ function normalizePropertyInput(input) {
     constructionYear: optionalNumber(input.construction_year ?? input.constructionYear, 'construction_year', { integer: true, min: 1800 }),
     governorateId: requiredNumber(input.governorate_id ?? input.governorateId, 'governorate_id', { integer: true, min: 1 }),
     cityId: requiredNumber(input.city_id ?? input.cityId, 'city_id', { integer: true, min: 1 }),
-    areaId: optionalNumber(input.area_id ?? input.areaId, 'area_id', { integer: true, min: 1 }),
     latitude: optionalNumber(input.latitude, 'latitude', { min: -90 }),
     longitude: optionalNumber(input.longitude, 'longitude', { min: -180 })
   };
@@ -111,7 +114,7 @@ export async function listPublicProperties(query) {
   const filters = {
     keyword: query.keyword ? String(query.keyword).trim() : undefined,
     purpose: query.purpose,
-    propertyType: query.type || query.property_type,
+    propertyType: normalizePropertyType(query.type || query.property_type),
     cityId: query.cityId ? parseId(query.cityId, 'cityId') : undefined,
     governorateId: query.governorateId ? parseId(query.governorateId, 'governorateId') : undefined,
     governorateName: query.governorate ? `%${String(query.governorate).trim()}%` : undefined,

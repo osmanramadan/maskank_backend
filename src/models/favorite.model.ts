@@ -20,8 +20,6 @@ const propertyColumns = `
   g.name_en AS governorate,
   p.city_id,
   c.name_en AS city,
-  p.area_id,
-  ar.name_en AS area,
   p.address,
   p.latitude,
   p.longitude,
@@ -44,7 +42,6 @@ const propertyColumns = `
 const propertyJoins = `
   JOIN governorates g ON g.id = p.governorate_id
   JOIN cities c ON c.id = p.city_id
-  LEFT JOIN areas ar ON ar.id = p.area_id
 `;
 
 export async function findUserFavorites(userId) {

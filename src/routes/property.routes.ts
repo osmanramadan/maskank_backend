@@ -10,6 +10,7 @@ import {
 } from '../controllers/property.controller.js';
 import { requireAuth, requireRole } from '../middleware/auth.middleware.js';
 import imageRoutes from './image.routes.js';
+import reportRoutes from './report.routes.js';
 
 const router = Router();
 const ownerRoles = requireRole('OWNER', 'BROKER');
@@ -18,6 +19,7 @@ router.get('/', listProperties);
 router.get('/mine', requireAuth, ownerRoles, listMyProperties);
 router.get('/mine/:id', requireAuth, ownerRoles, getMyProperty);
 router.use('/:id/images', imageRoutes);
+router.use('/:id/report', reportRoutes);
 router.get('/:id', getProperty);
 router.post('/', requireAuth, ownerRoles, createPropertyHandler);
 router.put('/:id', requireAuth, ownerRoles, updatePropertyHandler);

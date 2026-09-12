@@ -1,5 +1,6 @@
 import {
   changePropertyStatus,
+  getAdminProperty,
   getAdminStats,
   listProperties,
   listReports,
@@ -18,6 +19,10 @@ export async function users(request, response, next) {
 
 export async function properties(request, response, next) {
   try { response.json({ success: true, ...(await listProperties(request.query)) }); } catch (error) { next(error); }
+}
+
+export async function property(request, response, next) {
+  try { response.json({ success: true, data: await getAdminProperty(request.params.id) }); } catch (error) { next(error); }
 }
 
 export async function approveProperty(request, response, next) {

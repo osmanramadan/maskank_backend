@@ -1,6 +1,7 @@
 import {
   deleteAdminProperty,
   findAdminProperties,
+  findAdminPropertyById,
   findAdminReports,
   findAdminUsers,
   getAdminStats,
@@ -55,6 +56,12 @@ export async function listProperties(query) {
   if (status && !propertyStatuses.has(status)) throw adminError('Invalid property status filter');
   const result = await findAdminProperties({ page, limit, status });
   return paginatedResult(result, page, limit);
+}
+
+export async function getAdminProperty(propertyIdValue) {
+  const property = await findAdminPropertyById(parseId(propertyIdValue, 'property id'));
+  if (!property) throw adminError('Property not found', 404);
+  return property;
 }
 
 export async function changePropertyStatus(propertyIdValue, status, adminId, rejectionReason) {

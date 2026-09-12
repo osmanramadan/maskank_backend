@@ -33,15 +33,6 @@ CREATE TABLE cities (
     UNIQUE (governorate_id, name_en)
 );
 
-CREATE TABLE areas (
-    id BIGSERIAL PRIMARY KEY,
-    city_id BIGINT NOT NULL REFERENCES cities(id) ON DELETE RESTRICT,
-    name_ar VARCHAR(120) NOT NULL,
-    name_en VARCHAR(120) NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    UNIQUE (city_id, name_en)
-);
-
 CREATE TABLE properties (
     id BIGSERIAL PRIMARY KEY,
     owner_id BIGINT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
@@ -60,7 +51,6 @@ CREATE TABLE properties (
     construction_year SMALLINT CHECK (construction_year IS NULL OR construction_year BETWEEN 1800 AND 2200),
     governorate_id BIGINT NOT NULL REFERENCES governorates(id) ON DELETE RESTRICT,
     city_id BIGINT NOT NULL REFERENCES cities(id) ON DELETE RESTRICT,
-    area_id BIGINT REFERENCES areas(id) ON DELETE RESTRICT,
     address VARCHAR(255) NOT NULL,
     latitude NUMERIC(9, 6) CHECK (latitude IS NULL OR latitude BETWEEN -90 AND 90),
     longitude NUMERIC(9, 6) CHECK (longitude IS NULL OR longitude BETWEEN -180 AND 180),
@@ -137,7 +127,7 @@ CREATE TABLE property_reports (
 
 CREATE INDEX idx_properties_public_search ON properties (status, purpose, property_type, city_id, price, area_sqm);
 CREATE INDEX idx_properties_filter_ranges ON properties (status, price, area_sqm, bedrooms, bathrooms, furnished);
-CREATE INDEX idx_properties_location ON properties (governorate_id, city_id, area_id);
+CREATE INDEX idx_properties_location ON properties (governorate_id, city_id);
 CREATE INDEX idx_properties_owner ON properties (owner_id, status);
 CREATE INDEX idx_properties_created_at ON properties (created_at DESC);
 CREATE INDEX idx_property_images_property ON property_images (property_id, display_order);

@@ -1,6 +1,6 @@
 import { pool } from '../config/database.js';
 
-const propertyColumns = `
+export const propertyColumns = `
   p.id,
   p.owner_id,
   p.title,
@@ -20,8 +20,6 @@ const propertyColumns = `
   g.name_en AS governorate,
   p.city_id,
   c.name_en AS city,
-  p.area_id,
-  ar.name_en AS area,
   p.address,
   p.latitude,
   p.longitude,
@@ -46,11 +44,10 @@ const propertyColumns = `
   ), '[]'::json) AS images
 `;
 
-const fromClause = `
+export const fromClause = `
   FROM properties p
   JOIN governorates g ON g.id = p.governorate_id
   JOIN cities c ON c.id = p.city_id
-  LEFT JOIN areas ar ON ar.id = p.area_id
 `;
 
 export async function findPublicProperties({ page, limit, filters, sort }) {
@@ -169,7 +166,7 @@ export async function createProperty(property) {
     `INSERT INTO properties (
       owner_id, title, description, property_type, purpose, price, currency,
       area_sqm, bedrooms, bathrooms, floor, total_floors, furnished,
-      construction_year, governorate_id, city_id, area_id, address,
+      construction_year, governorate_id, city_id, address,
       latitude, longitude, google_maps_url
     ) VALUES (
       $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13,
@@ -180,7 +177,7 @@ export async function createProperty(property) {
       property.purpose, property.price, property.currency, property.areaSqm,
       property.bedrooms, property.bathrooms, property.floor, property.totalFloors,
       property.furnished, property.constructionYear, property.governorateId,
-      property.cityId, property.areaId, property.address, property.latitude,
+      property.cityId, property.address, property.latitude,
       property.longitude, property.googleMapsUrl
     ]
   );
@@ -193,8 +190,8 @@ export async function updateProperty(id, ownerId, property) {
       title = $1, description = $2, property_type = $3, purpose = $4,
       price = $5, currency = $6, area_sqm = $7, bedrooms = $8, bathrooms = $9,
       floor = $10, total_floors = $11, furnished = $12, construction_year = $13,
-      governorate_id = $14, city_id = $15, area_id = $16, address = $17,
-      latitude = $18, longitude = $19, google_maps_url = $20,
+      governorate_id = $14, city_id = $15, address = $16,
+      latitude = $17, longitude = $18, google_maps_url = $19,
       status = 'pending', rejection_reason = NULL, approved_by = NULL, approved_at = NULL
      WHERE id = $21 AND owner_id = $22
      RETURNING id`,
@@ -203,7 +200,7 @@ export async function updateProperty(id, ownerId, property) {
       property.price, property.currency, property.areaSqm, property.bedrooms,
       property.bathrooms, property.floor, property.totalFloors, property.furnished,
       property.constructionYear, property.governorateId, property.cityId,
-      property.areaId, property.address, property.latitude, property.longitude,
+      property.address, property.latitude, property.longitude,
       property.googleMapsUrl, id, ownerId
     ]
   );

@@ -5,6 +5,7 @@ import {
   markRented,
   markSold,
   properties,
+  property,
   rejectProperty,
   reports,
   resolveReportHandler,
@@ -19,6 +20,7 @@ router.use(requireAuth, requireRole('ADMIN'));
 router.get('/stats', stats);
 router.get('/users', users);
 router.get('/properties', properties);
+router.get('/properties/:id', property);
 router.put('/properties/:id/approve', approveProperty);
 router.put('/properties/:id/reject', rejectProperty);
 router.put('/properties/:id/sold', markSold);

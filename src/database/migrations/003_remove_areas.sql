@@ -1,0 +1,6 @@
+BEGIN;
+
+ALTER TABLE properties DROP COLUMN IF EXISTS area_id;
+DROP TABLE IF EXISTS areas;
+
+COMMIT;
