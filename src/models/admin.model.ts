@@ -14,7 +14,8 @@ export async function getAdminStats() {
     pool.query("SELECT COUNT(*)::int AS total FROM properties WHERE status = 'approved'"),
     pool.query("SELECT COUNT(*)::int AS total FROM properties WHERE status = 'sold'"),
     pool.query("SELECT COUNT(*)::int AS total FROM properties WHERE status = 'rented'"),
-    pool.query('SELECT COUNT(*)::int AS total FROM property_views')
+    pool.query('SELECT COUNT(*)::int AS total FROM property_views'),
+    pool.query('SELECT COUNT(*)::int AS total FROM property_reports')
   ]);
 
   const values = result.map((query) => query.rows[0].total);
@@ -26,7 +27,8 @@ export async function getAdminStats() {
     approvedProperties: values[4],
     soldProperties: values[5],
     rentedProperties: values[6],
-    totalPropertyViews: values[7]
+    totalPropertyViews: values[7],
+    totalReports: values[8]
   };
 }
 

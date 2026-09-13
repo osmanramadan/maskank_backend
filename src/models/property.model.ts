@@ -13,7 +13,6 @@ export const propertyColumns = `
   p.bedrooms,
   p.bathrooms,
   p.floor,
-  p.total_floors,
   p.furnished,
   p.construction_year,
   p.governorate_id,
@@ -23,7 +22,6 @@ export const propertyColumns = `
   p.address,
   p.latitude,
   p.longitude,
-  p.google_maps_url,
   p.status,
   p.rejection_reason,
   p.approved_by,
@@ -165,20 +163,19 @@ export async function createProperty(property) {
   const result = await pool.query(
     `INSERT INTO properties (
       owner_id, title, description, property_type, purpose, price, currency,
-      area_sqm, bedrooms, bathrooms, floor, total_floors, furnished,
+      area_sqm, bedrooms, bathrooms, floor, furnished,
       construction_year, governorate_id, city_id, address,
-      latitude, longitude, google_maps_url
+      latitude, longitude
     ) VALUES (
       $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13,
-      $14, $15, $16, $17, $18, $19, $20
+      $14, $15, $16, $17, $18
     ) RETURNING id`,
     [
       property.ownerId, property.title, property.description, property.propertyType,
       property.purpose, property.price, property.currency, property.areaSqm,
-      property.bedrooms, property.bathrooms, property.floor, property.totalFloors,
-      property.furnished, property.constructionYear, property.governorateId,
-      property.cityId, property.address, property.latitude,
-      property.longitude, property.googleMapsUrl
+      property.bedrooms, property.bathrooms, property.floor, property.furnished,
+      property.constructionYear, property.governorateId,
+      property.cityId, property.address, property.latitude, property.longitude
     ]
   );
   return findPropertyByIdForOwner(result.rows[0].id, property.ownerId);
@@ -189,19 +186,18 @@ export async function updateProperty(id, ownerId, property) {
     `UPDATE properties SET
       title = $1, description = $2, property_type = $3, purpose = $4,
       price = $5, currency = $6, area_sqm = $7, bedrooms = $8, bathrooms = $9,
-      floor = $10, total_floors = $11, furnished = $12, construction_year = $13,
-      governorate_id = $14, city_id = $15, address = $16,
-      latitude = $17, longitude = $18, google_maps_url = $19,
+      floor = $10, furnished = $11, construction_year = $12,
+      governorate_id = $13, city_id = $14, address = $15,
+      latitude = $16, longitude = $17,
       status = 'pending', rejection_reason = NULL, approved_by = NULL, approved_at = NULL
-     WHERE id = $20 AND owner_id = $21
+     WHERE id = $18 AND owner_id = $19
      RETURNING id`,
     [
       property.title, property.description, property.propertyType, property.purpose,
       property.price, property.currency, property.areaSqm, property.bedrooms,
-      property.bathrooms, property.floor, property.totalFloors, property.furnished,
+      property.bathrooms, property.floor, property.furnished,
       property.constructionYear, property.governorateId, property.cityId,
-      property.address, property.latitude, property.longitude,
-      property.googleMapsUrl, id, ownerId
+      property.address, property.latitude, property.longitude, id, ownerId
     ]
   );
   return result.rows[0] ? findPropertyByIdForOwner(id, ownerId) : null;

@@ -71,15 +71,13 @@ function normalizePropertyInput(input) {
     propertyType: normalizePropertyType(input.property_type || input.propertyType) || '',
     purpose: String(input.purpose || '').toLowerCase(),
     currency: String(input.currency || 'EGP').toUpperCase(),
-    address: String(input.address || '').trim(),
-    googleMapsUrl: input.google_maps_url || input.googleMapsUrl || null,
+    address: String(input.address || '').trim() || null,
     furnished: optionalBoolean(input.furnished, 'furnished'),
     areaSqm: requiredNumber(input.area_sqm ?? input.area, 'area', { min: 0.01 }),
     price: requiredNumber(input.price, 'price', { min: 0 }),
     bedrooms: optionalNumber(input.bedrooms, 'bedrooms', { integer: true }),
     bathrooms: optionalNumber(input.bathrooms, 'bathrooms', { integer: true }),
     floor: optionalNumber(input.floor, 'floor', { integer: true }),
-    totalFloors: optionalNumber(input.total_floors ?? input.totalFloors, 'total_floors', { integer: true, min: 1 }),
     constructionYear: optionalNumber(input.construction_year ?? input.constructionYear, 'construction_year', { integer: true, min: 1800 }),
     governorateId: requiredNumber(input.governorate_id ?? input.governorateId, 'governorate_id', { integer: true, min: 1 }),
     cityId: requiredNumber(input.city_id ?? input.cityId, 'city_id', { integer: true, min: 1 }),
@@ -89,11 +87,9 @@ function normalizePropertyInput(input) {
 
   if (property.title.length < 5 || property.title.length > 180) throw propertyError('Title must be between 5 and 180 characters');
   if (!property.description) throw propertyError('Description is required');
-  if (!property.address) throw propertyError('Address is required');
   if (!propertyTypes.has(property.propertyType)) throw propertyError('Invalid property type');
   if (!purposes.has(property.purpose)) throw propertyError('Purpose must be sale or rent');
   if (!currencies.has(property.currency)) throw propertyError('Unsupported currency');
-  if (property.totalFloors !== null && property.floor !== null && property.floor > property.totalFloors) throw propertyError('Floor cannot exceed total floors');
   if ((property.latitude === null) !== (property.longitude === null)) throw propertyError('Latitude and longitude must be provided together');
   if (property.constructionYear !== null && property.constructionYear > new Date().getFullYear() + 1) throw propertyError('Invalid construction year');
 

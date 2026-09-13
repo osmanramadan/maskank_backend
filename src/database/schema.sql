@@ -46,22 +46,19 @@ CREATE TABLE properties (
     bedrooms SMALLINT CHECK (bedrooms IS NULL OR bedrooms >= 0),
     bathrooms SMALLINT CHECK (bathrooms IS NULL OR bathrooms >= 0),
     floor SMALLINT CHECK (floor IS NULL OR floor >= 0),
-    total_floors SMALLINT CHECK (total_floors IS NULL OR total_floors > 0),
     furnished BOOLEAN NOT NULL DEFAULT FALSE,
     construction_year SMALLINT CHECK (construction_year IS NULL OR construction_year BETWEEN 1800 AND 2200),
     governorate_id BIGINT NOT NULL REFERENCES governorates(id) ON DELETE RESTRICT,
     city_id BIGINT NOT NULL REFERENCES cities(id) ON DELETE RESTRICT,
-    address VARCHAR(255) NOT NULL,
+    address VARCHAR(255),
     latitude NUMERIC(9, 6) CHECK (latitude IS NULL OR latitude BETWEEN -90 AND 90),
     longitude NUMERIC(9, 6) CHECK (longitude IS NULL OR longitude BETWEEN -180 AND 180),
-    google_maps_url TEXT,
     status property_status NOT NULL DEFAULT 'pending',
     rejection_reason TEXT,
     approved_by BIGINT REFERENCES users(id) ON DELETE SET NULL,
     approved_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CHECK (total_floors IS NULL OR floor IS NULL OR floor <= total_floors),
     CHECK ((latitude IS NULL AND longitude IS NULL) OR (latitude IS NOT NULL AND longitude IS NOT NULL))
 );
 

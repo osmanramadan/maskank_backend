@@ -1,0 +1,3 @@
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS contact_phone VARCHAR(30),
+  ADD COLUMN IF NOT EXISTS whatsapp_phone VARCHAR(30);
