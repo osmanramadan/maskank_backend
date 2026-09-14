@@ -17,6 +17,7 @@
     "@types/morgan": "^1.9.9",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.15.0",
+    "@types/nodemailer": "^8.0.1",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.11.0",
     "cors": "^2.8.5",
@@ -28,6 +29,7 @@
     "maskank-frontend": "file:../frontend",
     "morgan": "^1.10.0",
     "multer": "^2.0.2",
+    "nodemailer": "^10.0.9",
     "pg": "^8.16.3",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3"

@@ -98,17 +98,6 @@ CREATE TABLE property_views (
     viewed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE messages (
-    id BIGSERIAL PRIMARY KEY,
-    sender_id BIGINT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
-    receiver_id BIGINT NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
-    property_id BIGINT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
-    message TEXT NOT NULL CHECK (length(trim(message)) > 0),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    read_at TIMESTAMPTZ,
-    CHECK (sender_id <> receiver_id)
-);
-
 CREATE TABLE property_reports (
     id BIGSERIAL PRIMARY KEY,
     property_id BIGINT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
@@ -131,8 +120,6 @@ CREATE INDEX idx_property_images_property ON property_images (property_id, displ
 CREATE UNIQUE INDEX idx_one_main_image_per_property ON property_images (property_id) WHERE is_main = TRUE;
 CREATE INDEX idx_favorites_user ON favorites (user_id, created_at DESC);
 CREATE INDEX idx_views_property ON property_views (property_id, viewed_at DESC);
-CREATE INDEX idx_messages_receiver ON messages (receiver_id, read_at, created_at DESC);
-CREATE INDEX idx_messages_sender ON messages (sender_id, created_at DESC);
 CREATE INDEX idx_reports_status ON property_reports (resolved, created_at DESC);
 
 CREATE OR REPLACE FUNCTION set_updated_at()

@@ -146,11 +146,10 @@ erDiagram
 - Deleting a governorate is restricted while cities or properties reference it.
 - Deleting a city is restricted while properties reference it.
 - Deleting a property cascades to its images, features, favorites, views,
-  messages, and reports.
+  and reports.
 - Deleting a user cascades to favorites and reports submitted by that user.
 - A deleted user remains referenced as `NULL` for optional property views,
   approved properties, and report resolutions.
-- Messages require different sender and receiver users.
 - A property can have at most one image marked as the main image.
 - A property's latitude and longitude are either both present or both absent.
 

@@ -75,7 +75,13 @@ export async function findAdminProperties({ page, limit, status }) {
 
 export async function findAdminPropertyById(propertyId) {
   const result = await pool.query(
-    `SELECT ${propertyColumns} ${fromClause} WHERE p.id = $1`,
+    `SELECT ${propertyColumns},
+            u.full_name AS owner_name,
+            u.email AS owner_email,
+            u.phone AS owner_phone
+     ${fromClause}
+     JOIN users u ON u.id = p.owner_id
+     WHERE p.id = $1`,
     [propertyId]
   );
   return result.rows[0] || null;
