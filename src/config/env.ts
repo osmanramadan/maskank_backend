@@ -31,10 +31,10 @@ export const env = {
   dbPoolMax: Number(process.env.DB_POOL_MAX || 10),
   dbIdleTimeoutMs: Number(process.env.DB_IDLE_TIMEOUT_MS || 10000),
   dbConnectionTimeoutMs: Number(process.env.DB_CONNECTION_TIMEOUT_MS || 5000)
-  , smtpHost: process.env.SMTP_HOST || ''
+  , smtpHost: process.env.SMTP_HOST?.trim() || ''
   , smtpPort: Number(process.env.SMTP_PORT || 587)
-  , smtpSecure: process.env.SMTP_SECURE === 'true'
-  , smtpUser: process.env.SMTP_USER || ''
+  , smtpSecure: process.env.SMTP_SECURE?.trim().toLowerCase() === 'true'
+  , smtpUser: process.env.SMTP_USER?.trim() || ''
   , smtpPassword: process.env.SMTP_PASSWORD || ''
-  , contactEmail: process.env.CONTACT_EMAIL || ''
+  , contactEmail: process.env.CONTACT_EMAIL?.trim() || ''
 };

@@ -8,7 +8,7 @@ const userColumns = `
 export async function getAdminStats() {
   const result = await Promise.all([
     pool.query('SELECT COUNT(*)::int AS total FROM users'),
-    pool.query("SELECT COUNT(*)::int AS total FROM users WHERE role IN ('OWNER', 'BROKER')"),
+    pool.query("SELECT COUNT(*)::int AS total FROM users WHERE role IN ('OWNER', 'BROKER', 'COMPANY')"),
     pool.query('SELECT COUNT(*)::int AS total FROM properties'),
     pool.query("SELECT COUNT(*)::int AS total FROM properties WHERE status = 'pending'"),
     pool.query("SELECT COUNT(*)::int AS total FROM properties WHERE status = 'approved'"),

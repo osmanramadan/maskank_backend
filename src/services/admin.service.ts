@@ -10,7 +10,7 @@ import {
 } from '../models/admin.model.js';
 
 const propertyStatuses = new Set(['pending', 'approved', 'rejected', 'sold', 'rented']);
-const userRoles = new Set(['USER', 'OWNER', 'BROKER', 'ADMIN']);
+const userRoles = new Set(['USER', 'OWNER', 'BROKER', 'COMPANY', 'ADMIN']);
 
 function adminError(message, statusCode = 400) {
   const error = new Error(message);

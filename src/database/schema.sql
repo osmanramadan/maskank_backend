@@ -1,4 +1,4 @@
-CREATE TYPE user_role AS ENUM ('USER', 'OWNER', 'BROKER', 'ADMIN');
+CREATE TYPE user_role AS ENUM ('USER', 'OWNER', 'BROKER', 'COMPANY', 'ADMIN');
 CREATE TYPE property_purpose AS ENUM ('sale', 'rent');
 CREATE TYPE property_status AS ENUM ('pending', 'approved', 'rejected', 'sold', 'rented');
 CREATE TYPE currency_code AS ENUM ('EGP');
@@ -51,6 +51,8 @@ CREATE TABLE properties (
     governorate_id BIGINT NOT NULL REFERENCES governorates(id) ON DELETE RESTRICT,
     city_id BIGINT NOT NULL REFERENCES cities(id) ON DELETE RESTRICT,
     address VARCHAR(255),
+    contact_phone VARCHAR(30),
+    whatsapp_phone VARCHAR(30),
     latitude NUMERIC(9, 6) CHECK (latitude IS NULL OR latitude BETWEEN -90 AND 90),
     longitude NUMERIC(9, 6) CHECK (longitude IS NULL OR longitude BETWEEN -180 AND 180),
     status property_status NOT NULL DEFAULT 'pending',

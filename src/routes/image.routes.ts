@@ -4,7 +4,7 @@ import { requireAuth, requireRole } from '../middleware/auth.middleware.js';
 import { uploadPropertyImages } from '../middleware/upload.middleware.js';
 
 const router = Router({ mergeParams: true });
-const ownerRoles = requireRole('OWNER', 'BROKER');
+const ownerRoles = requireRole('USER', 'OWNER', 'BROKER', 'COMPANY', 'ADMIN');
 
 router.post('/', requireAuth, ownerRoles, uploadPropertyImages.array('images'), uploadImages);
 router.delete('/:imageId', requireAuth, ownerRoles, deleteImage);

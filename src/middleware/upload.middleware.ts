@@ -28,3 +28,12 @@ export const uploadPropertyImages = multer({
     files: env.maxPropertyImages
   }
 });
+
+export const uploadAvatar = multer({
+  storage: multer.memoryStorage(),
+  fileFilter,
+  limits: {
+    fileSize: env.maxUploadFileSizeBytes,
+    files: 1
+  }
+});

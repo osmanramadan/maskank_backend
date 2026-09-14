@@ -65,6 +65,11 @@ function queryBoolean(value, field) {
 }
 
 function normalizePropertyInput(input) {
+  const normalizeContactPhone = (value, field) => {
+    const phone = value === undefined || value === null || value === '' ? null : String(value).trim();
+    if (phone !== null && !/^01[0125]\d{8}$/.test(phone)) throw propertyError(`${field} must be a valid Egyptian mobile number`);
+    return phone;
+  };
   const property = {
     title: String(input.title || '').trim(),
     description: String(input.description || '').trim(),
@@ -83,6 +88,8 @@ function normalizePropertyInput(input) {
     cityId: requiredNumber(input.city_id ?? input.cityId, 'city_id', { integer: true, min: 1 }),
     latitude: optionalNumber(input.latitude, 'latitude', { min: -90 }),
     longitude: optionalNumber(input.longitude, 'longitude', { min: -180 })
+    , contactPhone: normalizeContactPhone(input.contact_phone, 'contact_phone')
+    , whatsappPhone: normalizeContactPhone(input.whatsapp_phone, 'whatsapp_phone')
   };
 
   if (property.title.length < 5 || property.title.length > 180) throw propertyError('Title must be between 5 and 180 characters');

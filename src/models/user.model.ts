@@ -23,6 +23,17 @@ export async function findUserByEmail(email) {
   return result.rows[0] || null;
 }
 
+export async function findUserByPhone(phone) {
+  const result = await pool.query(
+    `SELECT ${publicUserColumns}
+     FROM users
+     WHERE phone = $1
+     LIMIT 1`,
+    [phone]
+  );
+  return result.rows[0] || null;
+}
+
 export async function findUserById(id) {
   const result = await pool.query(
     `SELECT ${publicUserColumns}
@@ -42,4 +53,37 @@ export async function createUser({ fullName, email, phone, passwordHash, role })
     [fullName, email, phone, passwordHash, role]
   );
   return result.rows[0];
+}
+
+export async function updateUserRole(id, role) {
+  const result = await pool.query(
+    `UPDATE users
+     SET role = $1, updated_at = NOW()
+     WHERE id = $2
+     RETURNING ${publicUserColumns}`,
+    [role, id]
+  );
+  return result.rows[0] || null;
+}
+
+export async function updateUserPhone(id, phone) {
+  const result = await pool.query(
+    `UPDATE users
+     SET phone = $1, updated_at = NOW()
+     WHERE id = $2
+     RETURNING ${publicUserColumns}`,
+    [phone, id]
+  );
+  return result.rows[0] || null;
+}
+
+export async function updateUserAvatar(id, avatarUrl) {
+  const result = await pool.query(
+    `UPDATE users
+     SET avatar_url = $1, updated_at = NOW()
+     WHERE id = $2
+     RETURNING ${publicUserColumns}`,
+    [avatarUrl, id]
+  );
+  return result.rows[0] || null;
 }

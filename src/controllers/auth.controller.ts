@@ -2,6 +2,8 @@ import {
   getAuthenticatedUser,
   loginUser,
   registerUser,
+  updateAuthenticatedUserRole,
+  updateAuthenticatedUserPhone,
   sanitizeUser
 } from '../services/auth.service.js';
 
@@ -38,6 +40,28 @@ export async function getMe(request, response, next) {
       success: true,
       data: { user: sanitizeUser(user) }
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updateRole(request, response, next) {
+  try {
+    const result = await updateAuthenticatedUserRole(request.user.id, request.body.role);
+    response.json({
+      success: true,
+      message: 'Account role updated successfully',
+      data: result
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updatePhone(request, response, next) {
+  try {
+    const result = await updateAuthenticatedUserPhone(request.user.id, request.body.phone);
+    response.json({ success: true, message: 'Phone number updated successfully', data: result });
   } catch (error) {
     next(error);
   }

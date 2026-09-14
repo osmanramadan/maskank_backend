@@ -22,6 +22,9 @@ export async function sendContactMessage(input) {
   if (!env.smtpHost || !env.smtpUser || !env.smtpPassword || !env.contactEmail) {
     throw contactError('Email service is not configured', 503);
   }
+  if (/\s/.test(env.smtpHost)) {
+    throw contactError('Email service is misconfigured: SMTP_HOST must contain one hostname only.', 503);
+  }
 
   const transporter = nodemailer.createTransport({
     host: env.smtpHost,
@@ -41,6 +44,9 @@ export async function sendContactMessage(input) {
   } catch (error) {
     if (typeof error === 'object' && error !== null && 'code' in error && error.code === 'EAUTH') {
       throw contactError('Email service authentication failed. Check SMTP_USER and SMTP_PASSWORD.', 503);
+    }
+    if (typeof error === 'object' && error !== null && 'code' in error && ['EDNS', 'ENOTFOUND', 'EAI_AGAIN'].includes(String(error.code))) {
+      throw contactError('Email service connection failed. Check SMTP_HOST in the deployment environment.', 503);
     }
     throw error;
   }

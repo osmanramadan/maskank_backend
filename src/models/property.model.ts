@@ -3,6 +3,10 @@ import { pool } from '../config/database.js';
 export const propertyColumns = `
   p.id,
   p.owner_id,
+  (SELECT u.full_name FROM users u WHERE u.id = p.owner_id) AS owner_name,
+  (SELECT u.email FROM users u WHERE u.id = p.owner_id) AS owner_email,
+  (SELECT u.phone FROM users u WHERE u.id = p.owner_id) AS owner_phone,
+  (SELECT u.avatar_url FROM users u WHERE u.id = p.owner_id) AS owner_avatar_url,
   p.title,
   p.description,
   p.property_type,
@@ -20,6 +24,8 @@ export const propertyColumns = `
   p.city_id,
   c.name_en AS city,
   p.address,
+  p.contact_phone,
+  p.whatsapp_phone,
   p.latitude,
   p.longitude,
   p.status,
@@ -59,6 +65,10 @@ export async function findPublicProperties({ page, limit, filters, sort }) {
       OR p.description ILIKE $${values.length}
       OR p.address ILIKE $${values.length}
     )`);
+  }
+  if (filters.ownerId) {
+    values.push(filters.ownerId);
+    conditions.push(`p.owner_id = $${values.length}`);
   }
   if (filters.purpose) {
     values.push(filters.purpose);
@@ -165,17 +175,18 @@ export async function createProperty(property) {
       owner_id, title, description, property_type, purpose, price, currency,
       area_sqm, bedrooms, bathrooms, floor, furnished,
       construction_year, governorate_id, city_id, address,
-      latitude, longitude
+      contact_phone, whatsapp_phone, latitude, longitude
     ) VALUES (
       $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13,
-      $14, $15, $16, $17, $18
+      $14, $15, $16, $17, $18, $19, $20
     ) RETURNING id`,
     [
       property.ownerId, property.title, property.description, property.propertyType,
       property.purpose, property.price, property.currency, property.areaSqm,
       property.bedrooms, property.bathrooms, property.floor, property.furnished,
       property.constructionYear, property.governorateId,
-      property.cityId, property.address, property.latitude, property.longitude
+      property.cityId, property.address, property.contactPhone, property.whatsappPhone,
+      property.latitude, property.longitude
     ]
   );
   return findPropertyByIdForOwner(result.rows[0].id, property.ownerId);
@@ -188,16 +199,18 @@ export async function updateProperty(id, ownerId, property) {
       price = $5, currency = $6, area_sqm = $7, bedrooms = $8, bathrooms = $9,
       floor = $10, furnished = $11, construction_year = $12,
       governorate_id = $13, city_id = $14, address = $15,
-      latitude = $16, longitude = $17,
+      contact_phone = $16, whatsapp_phone = $17,
+      latitude = $18, longitude = $19,
       status = 'pending', rejection_reason = NULL, approved_by = NULL, approved_at = NULL
-     WHERE id = $18 AND owner_id = $19
+     WHERE id = $20 AND owner_id = $21
      RETURNING id`,
     [
       property.title, property.description, property.propertyType, property.purpose,
       property.price, property.currency, property.areaSqm, property.bedrooms,
       property.bathrooms, property.floor, property.furnished,
       property.constructionYear, property.governorateId, property.cityId,
-      property.address, property.latitude, property.longitude, id, ownerId
+      property.address, property.contactPhone, property.whatsappPhone,
+      property.latitude, property.longitude, id, ownerId
     ]
   );
   return result.rows[0] ? findPropertyByIdForOwner(id, ownerId) : null;

@@ -13,6 +13,7 @@ import healthRoutes from './routes/health.routes.js';
 import locationRoutes from './routes/location.routes.js';
 import propertyRoutes from './routes/property.routes.js';
 import contactRoutes from './routes/contact.routes.js';
+import userRoutes from './routes/user.routes.js';
 
 const helmetFactory = (
   (helmetModule as unknown as { default?: unknown }).default ?? helmetModule
@@ -51,6 +52,7 @@ app.use('/api/favorites', favoriteRoutes);
 app.use('/api/locations', locationRoutes);
 app.use('/api/properties', propertyRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/users', userRoutes);
 app.use(notFound);
 app.use(errorHandler);
 

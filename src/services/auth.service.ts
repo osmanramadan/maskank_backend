@@ -1,9 +1,9 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
-import { createUser, findUserByEmail, findUserById } from '../models/user.model.js';
+import { createUser, findUserByEmail, findUserById, findUserByPhone, updateUserPhone, updateUserRole } from '../models/user.model.js';
 
-const registrationRoles = new Set(['USER', 'OWNER', 'BROKER']);
+const registrationRoles = new Set(['USER', 'OWNER', 'BROKER', 'COMPANY']);
 
 function normalizeEmail(email) {
   return email.trim().toLowerCase();
@@ -29,7 +29,7 @@ function sanitizeUser(user) {
 }
 
 export async function registerUser({ fullName, email, phone, password, role = 'USER' }) {
-  if (!fullName || !email || !phone || !password) {
+  if (!fullName || !email || !phone || !password || !String(fullName).trim() || !String(email).trim() || !String(phone).trim()) {
     throw createAuthError('Full name, email, phone, and password are required');
   }
 
@@ -42,7 +42,12 @@ export async function registerUser({ fullName, email, phone, password, role = 'U
   }
 
   const normalizedEmail = normalizeEmail(email);
+  const normalizedPhone = String(phone).trim();
   const normalizedRole = String(role).toUpperCase();
+
+  if (!/^01[0125]\d{8}$/.test(normalizedPhone)) {
+    throw createAuthError('A valid Egyptian mobile number is required');
+  }
 
   if (!registrationRoles.has(normalizedRole)) {
     throw createAuthError('Invalid registration role');
@@ -57,13 +62,18 @@ export async function registerUser({ fullName, email, phone, password, role = 'U
     throw createAuthError('Email is already registered', 409);
   }
 
+  const existingPhone = await findUserByPhone(normalizedPhone);
+  if (existingPhone) {
+    throw createAuthError('Phone number is already registered', 409);
+  }
+
   const passwordHash = await bcrypt.hash(password, env.bcryptSaltRounds);
 
   try {
     const user = await createUser({
       fullName: fullName.trim(),
       email: normalizedEmail,
-      phone: phone.trim(),
+      phone: normalizedPhone,
       passwordHash,
       role: normalizedRole
     });
@@ -98,6 +108,55 @@ export async function getAuthenticatedUser(userId) {
     throw createAuthError('User account not found or inactive', 401);
   }
   return user;
+}
+
+export async function updateAuthenticatedUserRole(userId, role) {
+  const normalizedRole = String(role).toUpperCase();
+  if (!registrationRoles.has(normalizedRole)) {
+    throw createAuthError('Invalid account role');
+  }
+
+  const user = await findUserById(userId);
+  if (!user || !user.is_active) {
+    throw createAuthError('User account not found or inactive', 401);
+  }
+  if (user.role === 'ADMIN') {
+    throw createAuthError('Administrator role cannot be changed', 403);
+  }
+
+  const updatedUser = await updateUserRole(userId, normalizedRole);
+  if (!updatedUser) {
+    throw createAuthError('User account not found', 404);
+  }
+  return { user: updatedUser, token: createToken(updatedUser) };
+}
+
+export async function updateAuthenticatedUserPhone(userId, phone) {
+  const normalizedPhone = String(phone || '').trim();
+  if (!/^01[0125]\d{8}$/.test(normalizedPhone)) {
+    throw createAuthError('A valid Egyptian mobile number is required');
+  }
+
+  const user = await findUserById(userId);
+  if (!user || !user.is_active) {
+    throw createAuthError('User account not found or inactive', 401);
+  }
+
+  const existingPhone = await findUserByPhone(normalizedPhone);
+  if (existingPhone && Number(existingPhone.id) !== Number(userId)) {
+    throw createAuthError('Phone number is already registered', 409);
+  }
+
+  try {
+    const updatedUser = await updateUserPhone(userId, normalizedPhone);
+    if (!updatedUser) throw createAuthError('User account not found', 404);
+    return { user: updatedUser };
+  } catch (error) {
+    if (error.code === '23505') {
+      throw createAuthError('Phone number is already registered', 409);
+    }
+    throw error;
+  }
 }
 
 export { sanitizeUser };

@@ -13,10 +13,10 @@ import imageRoutes from './image.routes.js';
 import reportRoutes from './report.routes.js';
 
 const router = Router();
-const ownerRoles = requireRole('OWNER', 'BROKER');
+const ownerRoles = requireRole('USER', 'OWNER', 'BROKER', 'COMPANY', 'ADMIN');
 
 router.get('/', listProperties);
-router.get('/mine', requireAuth, ownerRoles, listMyProperties);
+router.get('/mine', requireAuth, listMyProperties);
 router.get('/mine/:id', requireAuth, ownerRoles, getMyProperty);
 router.use('/:id/images', imageRoutes);
 router.use('/:id/report', reportRoutes);
