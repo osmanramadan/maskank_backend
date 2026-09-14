@@ -26,6 +26,7 @@ export const propertyColumns = `
   p.address,
   p.contact_phone,
   p.whatsapp_phone,
+  (SELECT COUNT(*)::int FROM property_views pv WHERE pv.property_id = p.id) AS view_count,
   p.latitude,
   p.longitude,
   p.status,
@@ -148,6 +149,26 @@ export async function findPublicPropertyById(id) {
     [id]
   );
   return result.rows[0] || null;
+}
+
+export async function recordPropertyView(propertyId, { userId = null, ipAddress = null } = {}) {
+  const result = await pool.query(
+    `INSERT INTO property_views (property_id, user_id, ip_address)
+     SELECT $1, $2, $3
+     WHERE NOT EXISTS (
+       SELECT 1
+       FROM property_views
+       WHERE property_id = $1
+         AND viewed_at > NOW() - INTERVAL '30 seconds'
+         AND (
+           ($2::bigint IS NOT NULL AND user_id = $2::bigint)
+           OR ($2::bigint IS NULL AND $3::inet IS NOT NULL AND ip_address = $3::inet)
+         )
+     )
+     RETURNING id`,
+    [propertyId, userId, ipAddress || null]
+  );
+  return result.rowCount > 0;
 }
 
 export async function findPropertiesByOwner(ownerId) {

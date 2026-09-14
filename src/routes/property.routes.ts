@@ -8,7 +8,7 @@ import {
   listProperties,
   updatePropertyHandler
 } from '../controllers/property.controller.js';
-import { requireAuth, requireRole } from '../middleware/auth.middleware.js';
+import { optionalAuth, requireAuth, requireRole } from '../middleware/auth.middleware.js';
 import imageRoutes from './image.routes.js';
 import reportRoutes from './report.routes.js';
 
@@ -20,7 +20,7 @@ router.get('/mine', requireAuth, listMyProperties);
 router.get('/mine/:id', requireAuth, ownerRoles, getMyProperty);
 router.use('/:id/images', imageRoutes);
 router.use('/:id/report', reportRoutes);
-router.get('/:id', getProperty);
+router.get('/:id', optionalAuth, getProperty);
 router.post('/', requireAuth, ownerRoles, createPropertyHandler);
 router.put('/:id', requireAuth, ownerRoles, updatePropertyHandler);
 router.delete('/:id', requireAuth, ownerRoles, deletePropertyHandler);

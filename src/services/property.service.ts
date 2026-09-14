@@ -5,6 +5,7 @@ import {
   findPropertyByIdForOwner,
   findPublicProperties,
   findPublicPropertyById,
+  recordPropertyView,
   updateProperty
 } from '../models/property.model.js';
 
@@ -144,9 +145,18 @@ export async function listPublicProperties(query) {
   };
 }
 
-export async function getPublicProperty(id) {
-  const property = await findPublicPropertyById(parseId(id));
+export async function getPublicProperty(
+  id,
+  viewer: { userId?: number | string | null; ipAddress?: string | null } = {}
+) {
+  const propertyId = parseId(id);
+  const property = await findPublicPropertyById(propertyId);
   if (!property) throw propertyError('Property not found', 404);
+  const viewRecorded = await recordPropertyView(propertyId, {
+    userId: viewer.userId || null,
+    ipAddress: viewer.ipAddress || null
+  });
+  if (viewRecorded) property.view_count = Number(property.view_count || 0) + 1;
   return property;
 }
 

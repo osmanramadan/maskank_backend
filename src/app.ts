@@ -22,6 +22,7 @@ const helmetFactory = (
 export const app = express();
 
 app.disable('x-powered-by');
+app.set('trust proxy', true);
 app.use(helmetFactory());
 app.use(cors({
   origin: (requestOrigin, callback) => {

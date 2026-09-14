@@ -16,7 +16,13 @@ export async function listProperties(request, response, next) {
 
 export async function getProperty(request, response, next) {
   try {
-    response.json({ success: true, data: await getPublicProperty(request.params.id) });
+    response.json({
+      success: true,
+      data: await getPublicProperty(request.params.id, {
+        userId: request.user?.id || null,
+        ipAddress: request.ip || null
+      })
+    });
   } catch (error) { next(error); }
 }
 
