@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getMe, login, register, updatePhone, updateRole } from '../controllers/auth.controller.js';
+import { getMe, login, register, updateContactVisibility, updateFullName, updatePhone, updateRole } from '../controllers/auth.controller.js';
 import { uploadAvatar } from '../controllers/avatar.controller.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { uploadAvatar as uploadAvatarFile } from '../middleware/upload.middleware.js';
@@ -11,6 +11,8 @@ router.post('/login', login);
 router.get('/me', requireAuth, getMe);
 router.patch('/me/role', requireAuth, updateRole);
 router.patch('/me/phone', requireAuth, updatePhone);
+router.patch('/me/name', requireAuth, updateFullName);
+router.patch('/me/contact-visibility', requireAuth, updateContactVisibility);
 router.post('/me/avatar', requireAuth, uploadAvatarFile.single('avatar'), uploadAvatar);
 
 export default router;

@@ -9,6 +9,8 @@ CREATE TABLE users (
     full_name VARCHAR(120) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     phone VARCHAR(30) NOT NULL UNIQUE,
+    email_public BOOLEAN NOT NULL DEFAULT TRUE,
+    phone_public BOOLEAN NOT NULL DEFAULT TRUE,
     password_hash TEXT NOT NULL,
     role user_role NOT NULL DEFAULT 'USER',
     avatar_url TEXT,

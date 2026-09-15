@@ -4,6 +4,8 @@ import {
   registerUser,
   updateAuthenticatedUserRole,
   updateAuthenticatedUserPhone,
+  updateAuthenticatedUserFullName,
+  updateAuthenticatedUserContactVisibility,
   sanitizeUser
 } from '../services/auth.service.js';
 
@@ -62,6 +64,28 @@ export async function updatePhone(request, response, next) {
   try {
     const result = await updateAuthenticatedUserPhone(request.user.id, request.body.phone);
     response.json({ success: true, message: 'Phone number updated successfully', data: result });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updateFullName(request, response, next) {
+  try {
+    const result = await updateAuthenticatedUserFullName(request.user.id, request.body.fullName);
+    response.json({ success: true, message: 'Full name updated successfully', data: result });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updateContactVisibility(request, response, next) {
+  try {
+    const result = await updateAuthenticatedUserContactVisibility(
+      request.user.id,
+      request.body.field,
+      request.body.visible
+    );
+    response.json({ success: true, message: 'Contact visibility updated successfully', data: result });
   } catch (error) {
     next(error);
   }

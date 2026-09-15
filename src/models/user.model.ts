@@ -5,6 +5,8 @@ const publicUserColumns = `
   full_name,
   email,
   phone,
+  email_public,
+  phone_public,
   role,
   avatar_url,
   is_active,
@@ -73,6 +75,28 @@ export async function updateUserPhone(id, phone) {
      WHERE id = $2
      RETURNING ${publicUserColumns}`,
     [phone, id]
+  );
+  return result.rows[0] || null;
+}
+
+export async function updateUserFullName(id, fullName) {
+  const result = await pool.query(
+    `UPDATE users
+     SET full_name = $1, updated_at = NOW()
+     WHERE id = $2
+     RETURNING ${publicUserColumns}`,
+    [fullName, id]
+  );
+  return result.rows[0] || null;
+}
+
+export async function updateUserContactVisibility(id, field, visible) {
+  if (field !== 'email_public' && field !== 'phone_public') {
+    throw new Error('Invalid contact visibility field');
+  }
+  const result = await pool.query(
+    `UPDATE users SET ${field} = $1, updated_at = NOW() WHERE id = $2 RETURNING ${publicUserColumns}`,
+    [visible, id]
   );
   return result.rows[0] || null;
 }

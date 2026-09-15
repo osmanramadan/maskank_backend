@@ -23,5 +23,12 @@ export async function getPublicUserProfile(userIdValue) {
     sort: 'p.created_at DESC'
   });
 
-  return { user, properties };
+  return {
+    user: {
+      ...user,
+      email: user.email_public ? user.email : null,
+      phone: user.phone_public ? user.phone : null
+    },
+    properties
+  };
 }

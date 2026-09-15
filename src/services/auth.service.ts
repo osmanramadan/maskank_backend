@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
-import { createUser, findUserByEmail, findUserById, findUserByPhone, updateUserPhone, updateUserRole } from '../models/user.model.js';
+import { createUser, findUserByEmail, findUserById, findUserByPhone, updateUserContactVisibility, updateUserFullName, updateUserPhone, updateUserRole } from '../models/user.model.js';
 
 const registrationRoles = new Set(['USER', 'OWNER', 'BROKER', 'COMPANY']);
 
@@ -157,6 +157,38 @@ export async function updateAuthenticatedUserPhone(userId, phone) {
     }
     throw error;
   }
+}
+
+export async function updateAuthenticatedUserFullName(userId, fullName) {
+  const normalizedName = String(fullName || '').trim();
+  if (normalizedName.length < 2 || normalizedName.length > 120) {
+    throw createAuthError('Full name must be between 2 and 120 characters');
+  }
+
+  const user = await findUserById(userId);
+  if (!user || !user.is_active) {
+    throw createAuthError('User account not found or inactive', 401);
+  }
+
+  const updatedUser = await updateUserFullName(userId, normalizedName);
+  if (!updatedUser) throw createAuthError('User account not found', 404);
+  return { user: updatedUser };
+}
+
+export async function updateAuthenticatedUserContactVisibility(userId, field, visible) {
+  if (field !== 'email_public' && field !== 'phone_public') {
+    throw createAuthError('Invalid contact visibility field');
+  }
+  if (typeof visible !== 'boolean') {
+    throw createAuthError('Visibility must be a boolean');
+  }
+  const user = await findUserById(userId);
+  if (!user || !user.is_active) {
+    throw createAuthError('User account not found or inactive', 401);
+  }
+  const updatedUser = await updateUserContactVisibility(userId, field, visible);
+  if (!updatedUser) throw createAuthError('User account not found', 404);
+  return { user: updatedUser };
 }
 
 export { sanitizeUser };
